@@ -1,5 +1,7 @@
-import { extension_settings, saveSettingsDebounced } from '../../../extensions.js';
-import { eventSource, event_types } from '../../../../script.js';
+import { extension_settings } from '../../../extensions.js';
+import { saveSettingsDebounced } from '../../../../script.js';
+import { eventSource, event_types } from '../../../events.js';
+import { macros } from '../../../macros/macro-system.js';
 
 const MODULE = 'preferenceRoulette';
 const FOLDER = 'third-party/st-preference-roulette';
@@ -68,12 +70,22 @@ function onMessageReceived(messageIndex) {
 }
 
 function registerMacro() {
-    const ctx = SillyTavern.getContext();
+    const handler = () => settings().current ?? '';
 
+    if (macros?.register) {
+        macros.register('preference', {
+            description: 'The keyword currently chosen by Preference Roulette',
+            handler,
+        });
+        return;
+    }
+
+    // Fallback for older SillyTavern builds.
+    const ctx = SillyTavern.getContext();
     if (typeof ctx.registerMacro === 'function') {
-        ctx.registerMacro('preference', () => settings().current ?? '');
+        ctx.registerMacro('preference', handler);
     } else {
-        console.warn('[Preference Roulette] registerMacro not available in this SillyTavern version; {{preference}} will not work.');
+        console.warn('[Preference Roulette] No macro registration API found; {{preference}} will not work.');
     }
 }
 
