@@ -1,0 +1,10 @@
+{
+  "display_name": "Preference Roulette",
+  "loading_order": 10,
+  "requires": [],
+  "version": "1.0.0",
+  "author": "you",
+  "homePage": "",
+  "auto_update": false,
+  "js": "index.js"
+}
